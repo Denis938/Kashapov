@@ -1,0 +1,60 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: homework_postgres
+    environment:
+      POSTGRES_DB: homework_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - homework_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: homework_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - homework_network
+
+  liquibase:
+    build:
+      context: ./Liquibase
+      dockerfile: Dockerfile
+    container_name: homework_liquibase
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      LIQUIBASE_URL: jdbc:postgresql://postgres:5432/homework_db
+      LIQUIBASE_USER: postgres
+      LIQUIBASE_PASSWORD: postgres
+    volumes:
+      - ./Liquibase:/liquibase/changelog
+    networks:
+      - homework_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  homework_network:
+    driver: bridge
+
