@@ -128,6 +128,12 @@ dotnet test
 2. Измените значения в `appsettings.json` согласно вашей локальной конфигурации
 3. `appsettings.Development.json` используется для настроек разработки (уже в .gitignore)
 
+### Настройка для разработки
+
+1. Скопируйте `appsettings.example.json` в `appsettings.json` (если файл еще не существует)
+2. Измените значения в `appsettings.json` согласно вашей локальной конфигурации
+3. `appsettings.Development.json` используется для настроек разработки (уже в .gitignore)
+
 ## Структура базы данных
 
 ### Таблицы
